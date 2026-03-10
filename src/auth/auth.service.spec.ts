@@ -45,26 +45,44 @@ describe('AuthService', () => {
     it('should register a new user and return access token', async () => {
       usersService.findOne.mockResolvedValue(null);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed_password');
-      usersService.create.mockResolvedValue({ id: 1, email: 'test@example.com', password: 'hashed_password', createdAt: new Date() });
+      usersService.create.mockResolvedValue({
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed_password',
+        createdAt: new Date(),
+      });
       jwtService.sign.mockReturnValue('jwt_token');
 
       const result = await service.register('test@example.com', 'password123');
 
       expect(result).toEqual({ access_token: 'jwt_token' });
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(usersService.findOne).toHaveBeenCalledWith('test@example.com');
       expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
     });
 
     it('should throw ConflictException if user already exists', async () => {
-      usersService.findOne.mockResolvedValue({ id: 1, email: 'test@example.com', password: 'hashed', createdAt: new Date() });
+      usersService.findOne.mockResolvedValue({
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed',
+        createdAt: new Date(),
+      });
 
-      await expect(service.register('test@example.com', 'password123')).rejects.toThrow(ConflictException);
+      await expect(
+        service.register('test@example.com', 'password123'),
+      ).rejects.toThrow(ConflictException);
     });
   });
 
   describe('login', () => {
     it('should return access token for valid credentials', async () => {
-      const user = { id: 1, email: 'test@example.com', password: 'hashed', createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed',
+        createdAt: new Date(),
+      };
       usersService.findOne.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       jwtService.sign.mockReturnValue('jwt_token');
@@ -77,25 +95,42 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException for invalid credentials', async () => {
       usersService.findOne.mockResolvedValue(null);
 
-      await expect(service.login('test@example.com', 'wrongpassword')).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.login('test@example.com', 'wrongpassword'),
+      ).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException for wrong password', async () => {
-      const user = { id: 1, email: 'test@example.com', password: 'hashed', createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed',
+        createdAt: new Date(),
+      };
       usersService.findOne.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login('test@example.com', 'wrongpassword')).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.login('test@example.com', 'wrongpassword'),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('validateUser', () => {
     it('should return user without password for valid credentials', async () => {
-      const user = { id: 1, email: 'test@example.com', password: 'hashed', createdAt: new Date() };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed',
+        createdAt: new Date(),
+      };
       usersService.findOne.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await service.validateUser('test@example.com', 'password123');
+      const result = await service.validateUser(
+        'test@example.com',
+        'password123',
+      );
 
       expect(result).not.toHaveProperty('password');
       expect(result).toHaveProperty('email', 'test@example.com');
@@ -104,7 +139,10 @@ describe('AuthService', () => {
     it('should return null for invalid credentials', async () => {
       usersService.findOne.mockResolvedValue(null);
 
-      const result = await service.validateUser('test@example.com', 'password123');
+      const result = await service.validateUser(
+        'test@example.com',
+        'password123',
+      );
 
       expect(result).toBeNull();
     });

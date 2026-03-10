@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ThirdPartyService } from './third-party.service';
+import { ThirdPartyService, ThirdPartyResponse } from './third-party.service';
 
 describe('ThirdPartyService', () => {
   let service: ThirdPartyService;
@@ -18,7 +18,7 @@ describe('ThirdPartyService', () => {
 
   describe('getData', () => {
     it('should return mock data for a given endpoint', async () => {
-      const result = await service.getData('/users');
+      const result: ThirdPartyResponse = await service.getData('/users');
 
       expect(result).toHaveProperty('source', 'third-party-api');
       expect(result).toHaveProperty('endpoint', '/users');
@@ -27,7 +27,7 @@ describe('ThirdPartyService', () => {
     });
 
     it('should return different endpoints correctly', async () => {
-      const result = await service.getData('/products');
+      const result: ThirdPartyResponse = await service.getData('/products');
 
       expect(result.endpoint).toBe('/products');
     });
@@ -36,7 +36,7 @@ describe('ThirdPartyService', () => {
   describe('postData', () => {
     it('should return mock created response', async () => {
       const body = { name: 'test', value: 42 };
-      const result = await service.postData('/items', body);
+      const result: ThirdPartyResponse = await service.postData('/items', body);
 
       expect(result).toHaveProperty('source', 'third-party-api');
       expect(result).toHaveProperty('endpoint', '/items');

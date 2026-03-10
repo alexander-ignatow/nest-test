@@ -43,7 +43,9 @@ describe('HealthController', () => {
         error: {},
         details: { database: { status: 'up' } },
       };
-      typeOrmHealthIndicator.pingCheck.mockResolvedValue({ database: { status: 'up' } });
+      typeOrmHealthIndicator.pingCheck.mockResolvedValue({
+        database: { status: 'up' },
+      });
       healthCheckService.check.mockResolvedValue(healthResult);
 
       const result = await controller.check();

@@ -33,12 +33,20 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a user by email', async () => {
-      const user: User = { id: 1, email: 'test@example.com', password: 'hashed', createdAt: new Date() };
+      const user: User = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed',
+        createdAt: new Date(),
+      };
       repository.findOne.mockResolvedValue(user);
 
       const result = await service.findOne('test@example.com');
       expect(result).toEqual(user);
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { email: 'test@example.com' } });
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { email: 'test@example.com' },
+      });
     });
 
     it('should return null if user not found', async () => {
@@ -51,13 +59,23 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should create and save a new user', async () => {
-      const user: User = { id: 1, email: 'test@example.com', password: 'hashed', createdAt: new Date() };
+      const user: User = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashed',
+        createdAt: new Date(),
+      };
       repository.create.mockReturnValue(user);
       repository.save.mockResolvedValue(user);
 
       const result = await service.create('test@example.com', 'hashed');
       expect(result).toEqual(user);
-      expect(repository.create).toHaveBeenCalledWith({ email: 'test@example.com', password: 'hashed' });
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(repository.create).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'hashed',
+      });
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(repository.save).toHaveBeenCalledWith(user);
     });
   });

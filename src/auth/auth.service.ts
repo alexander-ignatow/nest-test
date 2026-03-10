@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -11,7 +15,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(email: string, password: string): Promise<{ access_token: string }> {
+  async register(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
     const existing = await this.usersService.findOne(email);
     if (existing) {
       throw new ConflictException('User with this email already exists');
@@ -21,7 +28,10 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async login(email: string, password: string): Promise<{ access_token: string }> {
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
     const user = await this.validateUser(email, password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -29,7 +39,10 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findOne(email);
     if (!user) {
       return null;
@@ -38,11 +51,17 @@ export class AuthService {
     if (!isMatch) {
       return null;
     }
-    const { password: _pwd, ...result } = user;
+    const result: Omit<User, 'password'> = {
+      id: user.id,
+      email: user.email,
+      createdAt: user.createdAt,
+    };
     return result;
   }
 
-  private generateToken(user: { id: number; email: string }): { access_token: string } {
+  private generateToken(user: { id: number; email: string }): {
+    access_token: string;
+  } {
     const payload = { sub: user.id, email: user.email };
     return { access_token: this.jwtService.sign(payload) };
   }

@@ -32,10 +32,17 @@ describe('AuthController', () => {
     it('should call authService.register and return access token', async () => {
       authService.register.mockResolvedValue({ access_token: 'jwt_token' });
 
-      const result = await controller.register({ email: 'test@example.com', password: 'password123' });
+      const result = await controller.register({
+        email: 'test@example.com',
+        password: 'password123',
+      });
 
       expect(result).toEqual({ access_token: 'jwt_token' });
-      expect(authService.register).toHaveBeenCalledWith('test@example.com', 'password123');
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(authService.register).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+      );
     });
   });
 
@@ -43,10 +50,17 @@ describe('AuthController', () => {
     it('should call authService.login and return access token', async () => {
       authService.login.mockResolvedValue({ access_token: 'jwt_token' });
 
-      const result = await controller.login({ email: 'test@example.com', password: 'password123' });
+      const result = await controller.login({
+        email: 'test@example.com',
+        password: 'password123',
+      });
 
       expect(result).toEqual({ access_token: 'jwt_token' });
-      expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(authService.login).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+      );
     });
   });
 });

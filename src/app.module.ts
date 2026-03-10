@@ -12,11 +12,14 @@ import { User } from './users/entities/user.entity';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: ':memory:',
-      entities: [User],
-      synchronize: true, // Note: disable synchronize in production to avoid data loss
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'better-sqlite3',
+        database: ':memory:',
+        entities: [User],
+        // synchronize must be false in production; use migrations instead
+        synchronize: process.env['NODE_ENV'] !== 'production',
+      }),
     }),
     UsersModule,
     AuthModule,
